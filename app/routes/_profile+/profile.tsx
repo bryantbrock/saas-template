@@ -1,6 +1,6 @@
 import { invariantResponse } from '@epic-web/invariant'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
-import { json, type DataFunctionArgs } from '@remix-run/node'
+import { json, type DataFunctionArgs, type MetaFunction } from '@remix-run/node'
 import { Link, Outlet, useMatches } from '@remix-run/react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary'
@@ -13,8 +13,18 @@ import { cn } from '#app/utils/misc.tsx'
 export const BreadcrumbHandle = z.object({ breadcrumb: z.any() })
 export type BreadcrumbHandle = z.infer<typeof BreadcrumbHandle>
 
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	return [
+		{
+			title: data
+				? 'saas-template | Profile'
+				: 'Error | saas-template | Profile',
+		},
+		{ name: 'description', content: `saas-template user profile` },
+	]
+}
+
 export const handle: BreadcrumbHandle & SEOHandle = {
-	breadcrumb: <Icon name="file-text">Edit Profile</Icon>,
 	getSitemapEntries: () => null,
 }
 
@@ -62,13 +72,13 @@ export default function EditUserProfile() {
 								'text-muted-foreground': i < arr.length - 1,
 							})}
 						>
-							▶️ {breadcrumb}
+							<Icon name="chevron-right" /> {breadcrumb}
 						</li>
 					))}
 				</ul>
 			</div>
-			<Spacer size="xs" />
-			<main className="mx-auto bg-muted px-6 py-8 md:container md:rounded-3xl">
+			<Spacer size="2xs" />
+			<main className="bg-muted mx-auto px-6 py-8 md:container md:rounded-3xl">
 				<Outlet />
 			</main>
 		</div>

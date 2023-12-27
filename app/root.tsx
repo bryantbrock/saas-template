@@ -4,7 +4,7 @@ import {
 	Theme as RadixTheme,
 	Button,
 	IconButton,
-	// ThemePanel as RadixThemePanel,
+	DropdownMenu,
 } from '@radix-ui/themes'
 import { cssBundleHref } from '@remix-run/css-bundle'
 import {
@@ -26,8 +26,10 @@ import {
 	useFetcher,
 	useFetchers,
 	useLoaderData,
+	useSubmit,
 } from '@remix-run/react'
 import { withSentry } from '@sentry/remix'
+import { useRef } from 'react'
 import { AuthenticityTokenProvider } from 'remix-utils/csrf/react'
 import { HoneypotProvider } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
@@ -43,13 +45,13 @@ import { csrf } from './utils/csrf.server.ts'
 import { prisma } from './utils/db.server.ts'
 import { getEnv } from './utils/env.server.ts'
 import { honeypot } from './utils/honeypot.server.ts'
-import { combineHeaders, getDomainUrl } from './utils/misc.tsx'
+import { combineHeaders, getDomainUrl, getUserImgSrc } from './utils/misc.tsx'
 import { useNonce } from './utils/nonce-provider.ts'
 import { useRequestInfo } from './utils/request-info.ts'
 import { type Theme, setTheme, getTheme } from './utils/theme.server.ts'
 import { makeTimings, time } from './utils/timing.server.ts'
 import { getToast } from './utils/toast.server.ts'
-import { useOptionalUser } from './utils/user.ts'
+import { useOptionalUser, useUser } from './utils/user.ts'
 import '@radix-ui/themes/styles.css'
 import './styles/theme.css'
 
@@ -83,7 +85,7 @@ export const links: LinksFunction = () => {
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	return [
-		{ title: data ? 'Remix App' : 'Error | Remix App' },
+		{ title: data ? 'saas-template' : 'Error | saas-template' },
 		{ name: 'description', content: `Your own captain's log` },
 	]
 }
@@ -206,10 +208,7 @@ function Document({
 				<Links />
 			</head>
 			<body>
-				<RadixTheme appearance={theme}>
-					{children}
-					{/* <RadixThemePanel /> */}
-				</RadixTheme>
+				<RadixTheme appearance={theme}>{children}</RadixTheme>
 				<script
 					nonce={nonce}
 					dangerouslySetInnerHTML={{
@@ -234,7 +233,7 @@ function App() {
 		<Document nonce={nonce} theme={theme} env={data.ENV}>
 			<div className="flex h-screen min-h-screen flex-col justify-between">
 				<header>
-					<nav className="mx-auto max-w-screen-2xl p-3 md:p-6">
+					<nav className="mx-auto max-w-screen-2xl p-2 md:p-4">
 						<div className="flex w-full items-center justify-between gap-2">
 							<Link to="/">
 								<div className="font-light">saas-template</div>
@@ -244,15 +243,16 @@ function App() {
 									userPreference={data.requestInfo.userPrefs.theme}
 								/>
 								{user ? (
-									<Form action="/logout" method="POST">
-										<Button variant="outline" size="2" type="submit">
-											Logout
-										</Button>
-									</Form>
+									<UserDropdown />
 								) : (
-									<Button asChild variant="outline" size="2">
-										<Link to="/login">Log In</Link>
-									</Button>
+									<>
+										<Button asChild size="2" variant="outline">
+											<Link to="/login">Log In</Link>
+										</Button>
+										<Button asChild size="2">
+											<Link to="/signup">Sign up</Link>
+										</Button>
+									</>
 								)}
 							</div>
 						</div>
@@ -345,12 +345,70 @@ function ThemeSwitch({ userPreference }: { userPreference?: Theme | null }) {
 		<fetcher.Form method="POST" {...form.props}>
 			<input type="hidden" name="theme" value={nextMode} />
 			<div className="flex gap-2">
-				<IconButton type="submit" variant="outline">
+				<IconButton type="submit" variant="soft">
 					{modeLabel[mode]}
 				</IconButton>
 			</div>
 			<ErrorList errors={form.errors} id={form.errorId} />
 		</fetcher.Form>
+	)
+}
+
+function UserDropdown() {
+	const user = useUser()
+	const submit = useSubmit()
+	const formRef = useRef<HTMLFormElement>(null)
+
+	return (
+		<DropdownMenu.Root>
+			<DropdownMenu.Trigger>
+				<Button asChild variant="soft">
+					<Link
+						to="/profile"
+						// this is for progressive enhancement
+						onClick={e => e.preventDefault()}
+						className="flex items-center gap-2"
+					>
+						<img
+							className="h-6 w-6 rounded-full object-cover"
+							alt="User profile"
+							src={getUserImgSrc(user.image?.id)}
+						/>
+						<span className="text-body-sm font-bold">{user.name}</span>
+					</Link>
+				</Button>
+			</DropdownMenu.Trigger>
+			<DropdownMenu.Content align="start">
+				<DropdownMenu.Item asChild>
+					<Link prefetch="intent" to="/profile">
+						<Icon className="text-body-md" name="avatar">
+							Profile
+						</Icon>
+					</Link>
+				</DropdownMenu.Item>
+				<DropdownMenu.Item asChild>
+					<Link prefetch="intent" to="/dashboard">
+						<Icon className="text-body-md" name="home">
+							Dashboard
+						</Icon>
+					</Link>
+				</DropdownMenu.Item>
+				<DropdownMenu.Item
+					asChild
+					// this prevents the menu from closing before the form submission is completed
+					onSelect={event => {
+						event.preventDefault()
+						submit(formRef.current)
+					}}
+				>
+					<Form action="/logout" method="POST" ref={formRef}>
+						<Icon className="text-body-md" name="exit">
+							<button type="submit">Logout</button>
+						</Icon>
+					</Form>
+				</DropdownMenu.Item>
+			</DropdownMenu.Content>
+		</DropdownMenu.Root>
 	)
 }
 

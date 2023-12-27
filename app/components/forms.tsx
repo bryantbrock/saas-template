@@ -17,7 +17,7 @@ export function ErrorList({
 	return (
 		<ul id={id} className="flex flex-col gap-1">
 			{errorsToRender.map(e => (
-				<Text asChild key={e} color="red">
+				<Text asChild key={e} color="red" className="text-left">
 					<li className="text-[10px]">{e}</li>
 				</Text>
 			))}

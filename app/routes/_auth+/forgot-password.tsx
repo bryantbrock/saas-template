@@ -1,5 +1,6 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
+import { Heading, Link as RadixLink } from '@radix-ui/themes'
 import * as E from '@react-email/components'
 import {
 	json,
@@ -129,56 +130,50 @@ export default function ForgotPasswordRoute() {
 	})
 
 	return (
-		<div className="container pb-32 pt-20">
-			<div className="flex flex-col justify-center">
+		<div className="mx-auto w-full max-w-md pt-20">
+			<div className="flex flex-col gap-3 text-center">
 				<div className="text-center">
-					<h1 className="text-h1">Forgot Password</h1>
-					<p className="mt-3 text-body-md text-muted-foreground">
+					<Heading>Forgot Password</Heading>
+					<p className="text-body-md text-muted-foreground mt-3">
 						No worries, we'll send you reset instructions.
 					</p>
 				</div>
-				<div className="mx-auto mt-16 min-w-full max-w-sm sm:min-w-[368px]">
+				<div className="mx-auto mt-8 min-w-full max-w-sm sm:min-w-[368px]">
 					<forgotPassword.Form method="POST" {...form.props}>
 						<AuthenticityTokenInput />
 						<HoneypotInputs />
-						<div>
-							<Field
-								labelProps={{
-									htmlFor: fields.email.id,
-									children: 'Email',
-								}}
-								inputProps={{
-									autoFocus: true,
-									type: 'email',
-									...conform.input(fields.email),
-								}}
-								errors={fields.email.errors}
-							/>
-						</div>
+						<Field
+							labelProps={{
+								htmlFor: fields.email.id,
+								children: 'Email',
+								className: 'text-start',
+							}}
+							inputProps={{
+								autoFocus: true,
+								type: 'email',
+								...conform.input(fields.email),
+							}}
+							errors={fields.email.errors}
+						/>
 						<ErrorList errors={form.errors} id={form.errorId} />
 
-						<div className="mt-6">
-							<StatusButton
-								className="w-full"
-								status={
-									forgotPassword.state === 'submitting'
-										? 'pending'
-										: forgotPassword.data?.status ?? 'idle'
-								}
-								type="submit"
-								disabled={forgotPassword.state !== 'idle'}
-							>
-								Recover password
-							</StatusButton>
-						</div>
+						<StatusButton
+							className="w-full"
+							status={
+								forgotPassword.state === 'submitting'
+									? 'pending'
+									: forgotPassword.data?.status ?? 'idle'
+							}
+							type="submit"
+							disabled={forgotPassword.state !== 'idle'}
+						>
+							Recover password
+						</StatusButton>
 					</forgotPassword.Form>
-					<Link
-						to="/login"
-						className="mt-11 text-center text-body-sm font-bold"
-					>
-						Back to Login
-					</Link>
 				</div>
+				<RadixLink asChild className="mt-10">
+					<Link to="/login">Back to Login</Link>
+				</RadixLink>
 			</div>
 		</div>
 	)

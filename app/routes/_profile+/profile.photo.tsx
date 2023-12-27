@@ -2,6 +2,7 @@ import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import { invariantResponse } from '@epic-web/invariant'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
+import { Button } from '@radix-ui/themes'
 import {
 	json,
 	redirect,
@@ -186,9 +187,11 @@ export default function PhotoRoute() {
 							}
 						}}
 					/>
-					<label htmlFor={fields.photoFile.id}>
-						<Icon name="pencil-1">Change</Icon>
-					</label>
+					<Button asChild variant="outline" className="cursor-pointer">
+						<label htmlFor={fields.photoFile.id}>
+							<Icon name="pencil-1">Change</Icon>
+						</label>
+					</Button>
 					<StatusButton
 						name="intent"
 						value="submit"
@@ -204,31 +207,38 @@ export default function PhotoRoute() {
 					>
 						Save Photo
 					</StatusButton>
-					<button type="reset" className="peer-invalid:hidden">
-						<Icon name="trash">Reset</Icon>
-					</button>
+					<Button
+						type="reset"
+						color="gray"
+						variant="soft"
+						className="peer-invalid:hidden"
+					>
+						<Icon name="reset" />
+					</Button>
 					{data.user.image?.id ? (
-						<StatusButton
-							className="peer-valid:hidden"
-							{...doubleCheckDeleteImage.getButtonProps({
-								type: 'submit',
-								name: 'intent',
-								value: 'delete',
-							})}
-							status={
-								pendingIntent === 'delete'
-									? 'pending'
-									: lastSubmissionIntent === 'delete'
-										? actionData?.status ?? 'idle'
-										: 'idle'
-							}
-						>
-							<Icon name="trash">
-								{doubleCheckDeleteImage.doubleCheck
-									? 'Are you sure?'
-									: 'Delete'}
-							</Icon>
-						</StatusButton>
+						<Button asChild color="red">
+							<StatusButton
+								className="peer-valid:hidden"
+								{...doubleCheckDeleteImage.getButtonProps({
+									type: 'submit',
+									name: 'intent',
+									value: 'delete',
+								})}
+								status={
+									pendingIntent === 'delete'
+										? 'pending'
+										: lastSubmissionIntent === 'delete'
+											? actionData?.status ?? 'idle'
+											: 'idle'
+								}
+							>
+								<Icon name="trash">
+									{doubleCheckDeleteImage.doubleCheck
+										? 'Are you sure?'
+										: 'Delete'}
+								</Icon>
+							</StatusButton>
+						</Button>
 					) : null}
 				</div>
 				<ErrorList errors={form.errors} />

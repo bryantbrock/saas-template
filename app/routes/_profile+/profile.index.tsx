@@ -2,6 +2,7 @@ import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import { invariantResponse } from '@epic-web/invariant'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
+import { IconButton, Button } from '@radix-ui/themes'
 import { json, type DataFunctionArgs } from '@remix-run/node'
 import { Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
@@ -101,7 +102,7 @@ export default function EditUserProfile() {
 	const data = useLoaderData<typeof loader>()
 
 	return (
-		<div className="flex flex-col gap-12">
+		<div className="flex flex-col gap-6">
 			<div className="flex justify-center">
 				<div className="relative h-52 w-52">
 					<img
@@ -109,19 +110,21 @@ export default function EditUserProfile() {
 						alt={data.user.name ?? data.user.email}
 						className="h-full w-full rounded-full object-cover"
 					/>
-					<Link
-						preventScrollReset
-						to="photo"
-						title="Change profile photo"
-						aria-label="Change profile photo"
-					>
-						<Icon name="camera" className="h-4 w-4" />
-					</Link>
+					<IconButton asChild className="absolute bottom-4 right-4">
+						<Link
+							preventScrollReset
+							to="photo"
+							title="Change profile photo"
+							aria-label="Change profile photo"
+						>
+							<Icon name="camera" className="h-4 w-4" />
+						</Link>
+					</IconButton>
 				</div>
 			</div>
 			<UpdateProfile />
-			<div className="col-span-6 my-6 h-1 border-b-[1.5px] border-foreground" />
-			<div className="col-span-full flex flex-col gap-6">
+			<div className="border-foreground col-span-6 my-4 h-1 border-b-[1.5px]" />
+			<div className="col-span-full flex flex-col gap-4">
 				<div>
 					<Link to="change-email">
 						<Icon name="envelope-closed">
@@ -145,11 +148,11 @@ export default function EditUserProfile() {
 						</Icon>
 					</Link>
 				</div>
-				<div>
+				{/* <div>
 					<Link to="connections">
 						<Icon name="link-2">Manage connections</Icon>
 					</Link>
-				</div>
+				</div> */}
 				<div>
 					<Link
 						reloadDocument
@@ -219,11 +222,9 @@ function UpdateProfile() {
 
 			<ErrorList errors={form.errors} id={form.errorId} />
 
-			<div className="mt-8 flex justify-center">
-				<button type="submit" name="intent" value={profileUpdateActionIntent}>
-					Save changes
-				</button>
-			</div>
+			<Button type="submit" name="intent" value={profileUpdateActionIntent}>
+				Save changes
+			</Button>
 		</fetcher.Form>
 	)
 }
@@ -300,18 +301,20 @@ function DeleteData() {
 		<div>
 			<fetcher.Form method="POST">
 				<AuthenticityTokenInput />
-				<StatusButton
-					{...dc.getButtonProps({
-						type: 'submit',
-						name: 'intent',
-						value: deleteDataActionIntent,
-					})}
-					status={fetcher.state !== 'idle' ? 'pending' : 'idle'}
-				>
-					<Icon name="trash">
-						{dc.doubleCheck ? `Are you sure?` : `Delete all your data`}
-					</Icon>
-				</StatusButton>
+				<Button asChild color="red">
+					<StatusButton
+						{...dc.getButtonProps({
+							type: 'submit',
+							name: 'intent',
+							value: deleteDataActionIntent,
+						})}
+						status={fetcher.state !== 'idle' ? 'pending' : 'idle'}
+					>
+						<Icon name="trash">
+							{dc.doubleCheck ? `Are you sure?` : `Delete all your data`}
+						</Icon>
+					</StatusButton>
+				</Button>
 			</fetcher.Form>
 		</div>
 	)
