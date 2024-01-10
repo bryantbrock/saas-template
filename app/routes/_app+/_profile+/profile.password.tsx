@@ -167,7 +167,7 @@ export default function ChangePasswordRoute() {
 				>
 					Change Password
 				</StatusButton>
-				<Button asChild variant="ghost">
+				<Button asChild variant="soft">
 					<Link to="..">Cancel</Link>
 				</Button>
 			</div>

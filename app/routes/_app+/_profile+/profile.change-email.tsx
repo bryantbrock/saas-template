@@ -219,7 +219,7 @@ export default function ChangeEmailIndex() {
 	})
 
 	return (
-		<div className="max-w-sm">
+		<div>
 			<Heading>Change Email</Heading>
 			<Text>
 				You will receive an email at the new email address to confirm. An email
@@ -235,6 +235,7 @@ export default function ChangeEmailIndex() {
 							...conform.input(fields.email),
 							autoComplete: 'email',
 						}}
+						className="max-w-sm"
 						errors={fields.email.errors}
 					/>
 					<ErrorList id={form.errorId} errors={form.errors} />

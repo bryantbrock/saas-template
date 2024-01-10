@@ -16,7 +16,6 @@ import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { getUserImgSrc, useDoubleCheck } from '#app/utils/misc.tsx'
 import { authSessionStorage } from '#app/utils/session.server.ts'
-import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { NameSchema } from '#app/utils/user-validation.ts'
 import { twoFAVerificationType } from './profile.two-factor.js'
 
@@ -75,7 +74,6 @@ type ProfileActionArgs = {
 }
 const profileUpdateActionIntent = 'update-profile'
 const signOutOfSessionsActionIntent = 'sign-out-of-sessions'
-const deleteDataActionIntent = 'delete-data'
 
 export async function action({ request }: DataFunctionArgs) {
 	const userId = await requireUserId(request)
@@ -89,9 +87,6 @@ export async function action({ request }: DataFunctionArgs) {
 		}
 		case signOutOfSessionsActionIntent: {
 			return signOutOfSessionsAction({ request, userId, formData })
-		}
-		case deleteDataActionIntent: {
-			return deleteDataAction({ request, userId, formData })
 		}
 		default: {
 			throw new Response(`Invalid intent "${intent}"`, { status: 400 })
@@ -148,19 +143,7 @@ export default function EditUserProfile() {
 						</Button>
 					</div>
 					<div className="flex gap-2">
-						<Button asChild variant="soft" className="flex-grow">
-							<Link
-								reloadDocument
-								download="my-saas-template-data.json"
-								to="/resources/download-user-data"
-							>
-								<Icon name="download">Download your data</Icon>
-							</Link>
-						</Button>
 						<SignOutOfSessions />
-					</div>
-					<div className="flex gap-2">
-						<DeleteData />
 					</div>
 				</div>
 			</div>
@@ -282,42 +265,6 @@ function SignOutOfSessions() {
 			) : (
 				<Icon name="avatar">This is your only session</Icon>
 			)}
-		</div>
-	)
-}
-
-async function deleteDataAction({ userId }: ProfileActionArgs) {
-	await prisma.user.delete({ where: { id: userId } })
-	return redirectWithToast('/', {
-		type: 'success',
-		title: 'Data Deleted',
-		description: 'All of your data has been deleted',
-	})
-}
-
-function DeleteData() {
-	const dc = useDoubleCheck()
-
-	const fetcher = useFetcher<typeof deleteDataAction>()
-	return (
-		<div>
-			<fetcher.Form method="POST">
-				<AuthenticityTokenInput />
-				<Button asChild color="red">
-					<StatusButton
-						{...dc.getButtonProps({
-							type: 'submit',
-							name: 'intent',
-							value: deleteDataActionIntent,
-						})}
-						status={fetcher.state !== 'idle' ? 'pending' : 'idle'}
-					>
-						<Icon name="trash">
-							{dc.doubleCheck ? `Are you sure?` : `Delete all your data`}
-						</Icon>
-					</StatusButton>
-				</Button>
-			</fetcher.Form>
 		</div>
 	)
 }

@@ -193,9 +193,8 @@ export default function TwoFactorRoute() {
 							<ErrorList id={form.errorId} errors={form.errors} />
 						</div>
 
-						<div className="flex justify-between gap-4">
+						<div className="flex justify-center gap-4">
 							<StatusButton
-								className="w-full"
 								status={
 									pendingIntent === 'verify'
 										? 'pending'
@@ -210,7 +209,7 @@ export default function TwoFactorRoute() {
 								Submit
 							</StatusButton>
 							<StatusButton
-								className="w-full"
+								variant="soft"
 								status={
 									pendingIntent === 'cancel'
 										? 'pending'

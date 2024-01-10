@@ -243,7 +243,7 @@ function App() {
 					<nav className="mx-auto max-w-screen-2xl p-2 md:px-8 md:py-3">
 						<div className="flex w-full items-center justify-between gap-2">
 							<Link to="/">
-								<div className="font-light">SaasForFounders</div>
+								<div className="font-light">The Connell School of Writing</div>
 							</Link>
 							<div className="flex items-center gap-2">
 								<ThemeSwitch
