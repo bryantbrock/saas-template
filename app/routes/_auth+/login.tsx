@@ -17,7 +17,7 @@ import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx'
 import { Spacer } from '#app/components/spacer.tsx'
 import { StatusButton } from '#app/components/status-button.tsx'
-import { twoFAVerificationType } from '#app/routes/_profile+/profile.two-factor.tsx'
+import { twoFAVerificationType } from '#app/routes/_app+/_profile+/profile.two-factor.tsx'
 import {
 	getUserId,
 	login,
@@ -231,7 +231,7 @@ export async function action({ request }: DataFunctionArgs) {
 		request,
 		session,
 		remember: remember ?? false,
-		redirectTo,
+		redirectTo: redirectTo ?? '/app',
 	})
 }
 

@@ -10,6 +10,7 @@ export const StatusButton = React.forwardRef<
 		status: 'pending' | 'success' | 'error' | 'idle'
 		message?: string | null
 		spinDelay?: Parameters<typeof useSpinDelay>[1]
+		variant?: 'soft'
 	}
 >(
 	(

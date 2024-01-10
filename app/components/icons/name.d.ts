@@ -16,6 +16,7 @@ export type IconName =
 	| 'file-text'
 	| 'github-logo'
 	| 'home'
+	| 'info-circled'
 	| 'laptop'
 	| 'link-2'
 	| 'lock-closed'

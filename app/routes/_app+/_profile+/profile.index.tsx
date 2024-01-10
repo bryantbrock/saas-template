@@ -7,8 +7,9 @@ import { json, type DataFunctionArgs } from '@remix-run/node'
 import { Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { z } from 'zod'
-import { ErrorList, Field } from '#app/components/forms.tsx'
+import { Field } from '#app/components/forms.tsx'
 import { Icon } from '#app/components/icon.tsx'
+import { EnvelopeClosedIcon } from '#app/components/radix'
 import { StatusButton } from '#app/components/status-button.tsx'
 import { requireUserId, sessionKey } from '#app/utils/auth.server.ts'
 import { validateCSRF } from '#app/utils/csrf.server.ts'
@@ -103,14 +104,14 @@ export default function EditUserProfile() {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<div className="flex justify-center">
+			<div className="flex gap-4">
 				<div className="relative h-52 w-52">
 					<img
 						src={getUserImgSrc(data.user.image?.id)}
 						alt={data.user.name ?? data.user.email}
-						className="h-full w-full rounded-full object-cover"
+						className="h-48 w-48 rounded-full object-cover"
 					/>
-					<IconButton asChild className="absolute bottom-4 right-4">
+					<IconButton asChild className="absolute bottom-6 right-6">
 						<Link
 							preventScrollReset
 							to="photo"
@@ -121,49 +122,47 @@ export default function EditUserProfile() {
 						</Link>
 					</IconButton>
 				</div>
-			</div>
-			<UpdateProfile />
-			<div className="border-foreground col-span-6 my-4 h-1 border-b-[1.5px]" />
-			<div className="col-span-full flex flex-col gap-4">
-				<div>
-					<Link to="change-email">
-						<Icon name="envelope-closed">
-							Change email from {data.user.email}
-						</Icon>
-					</Link>
+				<div className="flex flex-grow flex-col gap-2">
+					<UpdateProfile />
+					<div className="flex gap-2">
+						<Button asChild variant="soft" className="flex-grow">
+							<Link to="change-email">
+								<EnvelopeClosedIcon /> Change email
+							</Link>
+						</Button>
+						<Button asChild variant="soft" className="flex-grow">
+							<Link to="two-factor">
+								{data.isTwoFactorEnabled ? (
+									<Icon name="lock-closed">2FA is enabled</Icon>
+								) : (
+									<Icon name="lock-open-1">Enable 2FA</Icon>
+								)}
+							</Link>
+						</Button>
+						<Button asChild variant="soft" className="flex-grow">
+							<Link to={data.hasPassword ? 'password' : 'password/create'}>
+								<Icon name="dots-horizontal">
+									{data.hasPassword ? 'Change Password' : 'Create a Password'}
+								</Icon>
+							</Link>
+						</Button>
+					</div>
+					<div className="flex gap-2">
+						<Button asChild variant="soft" className="flex-grow">
+							<Link
+								reloadDocument
+								download="my-saas-template-data.json"
+								to="/resources/download-user-data"
+							>
+								<Icon name="download">Download your data</Icon>
+							</Link>
+						</Button>
+						<SignOutOfSessions />
+					</div>
+					<div className="flex gap-2">
+						<DeleteData />
+					</div>
 				</div>
-				<div>
-					<Link to="two-factor">
-						{data.isTwoFactorEnabled ? (
-							<Icon name="lock-closed">2FA is enabled</Icon>
-						) : (
-							<Icon name="lock-open-1">Enable 2FA</Icon>
-						)}
-					</Link>
-				</div>
-				<div>
-					<Link to={data.hasPassword ? 'password' : 'password/create'}>
-						<Icon name="dots-horizontal">
-							{data.hasPassword ? 'Change Password' : 'Create a Password'}
-						</Icon>
-					</Link>
-				</div>
-				{/* <div>
-					<Link to="connections">
-						<Icon name="link-2">Manage connections</Icon>
-					</Link>
-				</div> */}
-				<div>
-					<Link
-						reloadDocument
-						download="my-saas-template-data.json"
-						to="/resources/download-user-data"
-					>
-						<Icon name="download">Download your data</Icon>
-					</Link>
-				</div>
-				<SignOutOfSessions />
-				<DeleteData />
 			</div>
 		</div>
 	)
@@ -209,22 +208,23 @@ function UpdateProfile() {
 	})
 
 	return (
-		<fetcher.Form method="POST" {...form.props}>
+		<fetcher.Form
+			method="POST"
+			{...form.props}
+			className="flex items-center gap-2"
+		>
 			<AuthenticityTokenInput />
-			<div className="grid grid-cols-6 gap-x-10">
-				<Field
-					className="col-span-3"
-					labelProps={{ htmlFor: fields.name.id, children: 'Name' }}
-					inputProps={conform.input(fields.name)}
-					errors={fields.name.errors}
-				/>
+			<Field
+				labelProps={{ htmlFor: fields.name.id, children: 'Name' }}
+				inputProps={conform.input(fields.name)}
+				errors={fields.name.errors}
+				className="flex-grow"
+			/>
+			<div className="mt-1">
+				<Button type="submit" name="intent" value={profileUpdateActionIntent}>
+					Save changes
+				</Button>
 			</div>
-
-			<ErrorList errors={form.errors} id={form.errorId} />
-
-			<Button type="submit" name="intent" value={profileUpdateActionIntent}>
-				Save changes
-			</Button>
 		</fetcher.Form>
 	)
 }
@@ -254,11 +254,13 @@ function SignOutOfSessions() {
 	const fetcher = useFetcher<typeof signOutOfSessionsAction>()
 	const otherSessionsCount = data.user._count.sessions - 1
 	return (
-		<div>
+		<div className="flex items-center gap-2">
 			{otherSessionsCount ? (
 				<fetcher.Form method="POST">
 					<AuthenticityTokenInput />
 					<StatusButton
+						variant="soft"
+						className="flex-grow"
 						{...dc.getButtonProps({
 							type: 'submit',
 							name: 'intent',

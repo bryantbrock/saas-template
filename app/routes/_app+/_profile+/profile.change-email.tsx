@@ -9,6 +9,7 @@ import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { z } from 'zod'
 import { ErrorList, Field } from '#app/components/forms.tsx'
 import { Icon } from '#app/components/icon.tsx'
+import { Button, Heading, Text } from '#app/components/radix.tsx'
 import {
 	prepareVerification,
 	requireRecentVerification,
@@ -218,13 +219,14 @@ export default function ChangeEmailIndex() {
 	})
 
 	return (
-		<div>
-			<h1 className="text-h1">Change Email</h1>
-			<p>You will receive an email at the new email address to confirm.</p>
-			<p>
-				An email notice will also be sent to your old address {data.user.email}.
-			</p>
-			<div className="mx-auto mt-5 max-w-sm">
+		<div className="max-w-sm">
+			<Heading>Change Email</Heading>
+			<Text>
+				You will receive an email at the new email address to confirm. An email
+				notice will also be sent to your old address{' '}
+				<strong>{data.user.email}</strong>.
+			</Text>
+			<div className="mt-5">
 				<Form method="POST" {...form.props}>
 					<AuthenticityTokenInput />
 					<Field
@@ -237,7 +239,7 @@ export default function ChangeEmailIndex() {
 					/>
 					<ErrorList id={form.errorId} errors={form.errors} />
 					<div>
-						<button>Send Confirmation</button>
+						<Button>Send Confirmation</Button>
 					</div>
 				</Form>
 			</div>

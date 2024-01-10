@@ -150,7 +150,7 @@ export default function PhotoRoute() {
 			<Form
 				method="POST"
 				encType="multipart/form-data"
-				className="flex flex-col items-center justify-center gap-10"
+				className="flex flex-col gap-10"
 				onReset={() => setNewImageSrc(null)}
 				{...form.props}
 			>
@@ -159,11 +159,11 @@ export default function PhotoRoute() {
 					src={
 						newImageSrc ?? (data.user ? getUserImgSrc(data.user.image?.id) : '')
 					}
-					className="h-52 w-52 rounded-full object-cover"
+					className="h-48 w-48 rounded-full object-cover"
 					alt={data.user?.name ?? data.user?.email}
 				/>
 				<ErrorList errors={fields.photoFile.errors} id={fields.photoFile.id} />
-				<div className="flex gap-4">
+				<div className="flex gap-2">
 					{/*
 						We're doing some kinda odd things to make it so this works well
 						without JavaScript. Basically, we're using CSS to ensure the right

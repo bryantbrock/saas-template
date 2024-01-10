@@ -7,6 +7,7 @@ import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { z } from 'zod'
 import { ErrorList, Field } from '#app/components/forms.tsx'
 import { Icon } from '#app/components/icon.tsx'
+import { Button } from '#app/components/radix'
 import { StatusButton } from '#app/components/status-button.tsx'
 import {
 	getPasswordHash,
@@ -130,7 +131,7 @@ export default function ChangePasswordRoute() {
 	})
 
 	return (
-		<Form method="POST" {...form.props} className="mx-auto max-w-md">
+		<Form method="POST" {...form.props} className="max-w-md">
 			<AuthenticityTokenInput />
 			<Field
 				labelProps={{ children: 'Current Password' }}
@@ -159,14 +160,16 @@ export default function ChangePasswordRoute() {
 				errors={fields.confirmNewPassword.errors}
 			/>
 			<ErrorList id={form.errorId} errors={form.errors} />
-			<div className="grid w-full grid-cols-2 gap-6">
-				<Link to="..">Cancel</Link>
+			<div className="flex items-center justify-between gap-2">
 				<StatusButton
 					type="submit"
 					status={isPending ? 'pending' : actionData?.status ?? 'idle'}
 				>
 					Change Password
 				</StatusButton>
+				<Button asChild variant="ghost">
+					<Link to="..">Cancel</Link>
+				</Button>
 			</div>
 		</Form>
 	)

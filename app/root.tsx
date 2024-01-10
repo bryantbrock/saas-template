@@ -36,6 +36,13 @@ import { z } from 'zod'
 import { GeneralErrorBoundary } from './components/error-boundary.tsx'
 import { ErrorList } from './components/forms.tsx'
 import { Icon, href as iconsHref } from './components/icon.tsx'
+import {
+	AvatarIcon,
+	HomeIcon,
+	LaptopIcon,
+	MoonIcon,
+	SunIcon,
+} from './components/radix.tsx'
 import { Toaster } from './components/toaster.tsx'
 import fontStyleSheetUrl from './styles/font.css'
 import tailwindStyleSheetUrl from './styles/tailwind.css'
@@ -233,10 +240,10 @@ function App() {
 		<Document nonce={nonce} theme={theme} env={data.ENV}>
 			<div className="flex h-screen min-h-screen flex-col justify-between">
 				<header>
-					<nav className="mx-auto max-w-screen-2xl p-2 md:p-4">
+					<nav className="mx-auto max-w-screen-2xl p-2 md:px-8 md:py-3">
 						<div className="flex w-full items-center justify-between gap-2">
 							<Link to="/">
-								<div className="font-light">saas-template</div>
+								<div className="font-light">SaasForFounders</div>
 							</Link>
 							<div className="flex items-center gap-2">
 								<ThemeSwitch
@@ -323,22 +330,11 @@ function ThemeSwitch({ userPreference }: { userPreference?: Theme | null }) {
 	const mode = optimisticMode ?? userPreference ?? 'system'
 	const nextMode =
 		mode === 'system' ? 'light' : mode === 'light' ? 'dark' : 'system'
+
 	const modeLabel = {
-		light: (
-			<Icon name="sun">
-				<span className="sr-only">Light</span>
-			</Icon>
-		),
-		dark: (
-			<Icon name="moon">
-				<span className="sr-only">Dark</span>
-			</Icon>
-		),
-		system: (
-			<Icon name="laptop">
-				<span className="sr-only">System</span>
-			</Icon>
-		),
+		light: <SunIcon />,
+		dark: <MoonIcon />,
+		system: <LaptopIcon />,
 	}
 
 	return (
@@ -381,16 +377,16 @@ function UserDropdown() {
 			<DropdownMenu.Content align="start">
 				<DropdownMenu.Item asChild>
 					<Link prefetch="intent" to="/profile">
-						<Icon className="text-body-md" name="avatar">
-							Profile
-						</Icon>
+						<span className="flex items-center gap-1.5">
+							<AvatarIcon /> Profile
+						</span>
 					</Link>
 				</DropdownMenu.Item>
 				<DropdownMenu.Item asChild>
-					<Link prefetch="intent" to="/dashboard">
-						<Icon className="text-body-md" name="home">
-							Dashboard
-						</Icon>
+					<Link prefetch="intent" to="/app">
+						<span className="flex items-center gap-1.5">
+							<HomeIcon /> Home
+						</span>
 					</Link>
 				</DropdownMenu.Item>
 				<DropdownMenu.Item
